@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,22 +28,22 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
-        checkValidation(film);
+    public Film create(@Valid @RequestBody Film film) {
+        checkReleaseDate(film);
         film.setId(id);
         this.id++;
-        log.debug(film.toString());
         films.put(film.getId(), film);
+        log.debug("Создание фильма - " + film);
         return film;
     }
 
     @PutMapping
-    public Film update(@RequestBody Film film) {
-        checkValidation(film);
+    public Film update(@Valid @RequestBody Film film) {
+        checkReleaseDate(film);
 
         if (films.containsKey(film.getId())) {
-            log.debug(film.toString());
             films.put(film.getId(), film);
+            log.debug("Обновление фильма - " + film);
             return film;
         } else {
             ValidationException e = new ValidationException("Фильм не найден");
@@ -51,29 +52,9 @@ public class FilmController {
         }
     }
 
-    private void checkValidation(Film film) {
-        if (film.getName().isBlank()) {
-            ValidationException e = new ValidationException("Название фильма не может быть пустым");
-            log.error(film.toString(), e);
-            throw e;
-        }
-
-        if (film.getDescription().length() > 200) {
-            ValidationException e = new ValidationException("Описание не может быть длиннее 200 символов."
-                    + " Количество символов: " + film.getDescription().length());
-            log.error(film.toString(), e);
-            throw e;
-        }
-
+    private void checkReleaseDate(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             ValidationException e = new ValidationException("Дата релиза фильма не может быть раньше 28.12.1895");
-            log.error(film.toString(), e);
-            throw e;
-        }
-
-        if (film.getDuration() <= 0) {
-            ValidationException e = new ValidationException("Продолжительность фильма не может быть отрицательной "
-                    + "или равной 0");
             log.error(film.toString(), e);
             throw e;
         }

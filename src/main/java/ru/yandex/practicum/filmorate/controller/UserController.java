@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.validation.constraints.Email;
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -28,23 +27,23 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@Email @RequestBody User user) {
-        checkValidation(user);
+    public User create(@Valid @RequestBody User user) {
+        checkLoginAndName(user);
         user.setId(id);
         this.id++;
-        log.debug(user.toString());
         users.put(user.getId(), user);
+        log.debug("Создание пользователя - " + user);
         return user;
     }
 
     @PutMapping
-    public User update(@Email @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         log.debug(user.toString());
-        checkValidation(user);
+        checkLoginAndName(user);
 
         if (users.containsKey(user.getId())) {
-            log.debug(user.toString());
             users.put(user.getId(), user);
+            log.debug("Обновление пользователя - " + user);
             return user;
         } else {
             ValidationException e = new ValidationException("Пользователь не найден");
@@ -53,21 +52,9 @@ public class UserController {
         }
     }
 
-    private void checkValidation(User user) {
-        if (user.getEmail().isBlank()) {
-            ValidationException e = new ValidationException("Email пользователя не может быть пустым");
-            log.error(user.toString(), e);
-            throw e;
-        }
-
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            ValidationException e = new ValidationException("Логин пустой или содержит пробелы");
-            log.error(user.toString(), e);
-            throw e;
-        }
-
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            ValidationException e = new ValidationException("Дата рождения не может быть в будущем");
+    private void checkLoginAndName(User user) {
+        if (user.getLogin().contains(" ")) {
+            ValidationException e = new ValidationException("Логин содержит пробелы");
             log.error(user.toString(), e);
             throw e;
         }
