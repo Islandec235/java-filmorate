@@ -20,6 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values();
     }
 
+
     public Film create(Film film) {
         checkReleaseDate(film);
         film.setId(id);
@@ -44,7 +45,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film delete(Film film) {
-        if (!films.containsKey(film.getId())) {
+        if ((Integer) film.getId() == null || !films.containsKey(film.getId())) {
             FilmNotFoundException e = new FilmNotFoundException("Фильм не найден");
             log.error(film.toString(), e);
             throw e;

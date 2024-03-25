@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -14,29 +13,28 @@ import java.util.Set;
 public class UserService {
     private final UserStorage userStorage;
 
-    @Autowired
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public User addFriend(int user1Id, int user2Id) {
-        User user1 = userStorage.getUserById(user1Id);
-        User user2 = userStorage.getUserById(user2Id);
-        Set<Long> user1Friends = user1.getFriends();
-        Set<Long> user2Friends = user2.getFriends();
-        user1Friends.add((long) user2Id);
-        user2Friends.add((long) user1Id);
-        return user1;
+    public User addFriend(int userId, int otherUserId) {
+        User user = userStorage.getUserById(userId);
+        User otherUser = userStorage.getUserById(otherUserId);
+        Set<Long> userFriends = user.getFriends();
+        Set<Long> otherUserFriends = otherUser.getFriends();
+        userFriends.add((long) otherUserId);
+        otherUserFriends.add((long) userId);
+        return user;
     }
 
-    public User deleteFriend(int user1Id, int user2Id) {
-        User user1 = userStorage.getUserById(user1Id);
-        User user2 = userStorage.getUserById(user2Id);
-        Set<Long> user1Friends = user1.getFriends();
-        Set<Long> user2Friends = user2.getFriends();
-        user1Friends.remove((long) user2Id);
-        user2Friends.remove((long) user1Id);
-        return user1;
+    public User deleteFriend(int userId, int otherUserId) {
+        User user = userStorage.getUserById(userId);
+        User otherUser = userStorage.getUserById(otherUserId);
+        Set<Long> userFriends = user.getFriends();
+        Set<Long> otherUserFriends = otherUser.getFriends();
+        userFriends.remove((long) otherUserId);
+        otherUserFriends.remove((long) userId);
+        return user;
     }
 
     public Collection<User> getFriends(int id) {
