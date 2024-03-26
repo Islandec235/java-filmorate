@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -19,4 +20,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Длительность фильма меньше или равна нулю")
     private int duration;
+    @PositiveOrZero
+    private long likes;
 }
