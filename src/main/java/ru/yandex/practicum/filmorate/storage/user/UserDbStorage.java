@@ -51,7 +51,7 @@ public class UserDbStorage implements UserStorage {
             return statement;
         }, keyHolder);
 
-        log.debug("Создание пользователя - " + user);
+        log.debug("Создание пользователя - {}", user);
 
         long id = keyHolder.getKey().longValue();
         return getUserById(id);
@@ -78,7 +78,7 @@ public class UserDbStorage implements UserStorage {
         String sqlQueryFriends = "DELETE FROM friends WHERE user_id = ? OR friend_id = ?";
         String sqlQueryLikedFilms = "DELETE FROM likes WHERE user_id = ?";
         String sqlQueryUsers = "DELETE FROM users WHERE id = ?;";
-        log.debug("Удаление пользователя - " + user);
+        log.debug("Удаление пользователя - {}", user);
         jdbcTemplate.update(sqlQueryFriends, user.getId(), user.getId());
         jdbcTemplate.update(sqlQueryLikedFilms, user.getId());
         jdbcTemplate.update(sqlQueryUsers, user.getId());
@@ -168,6 +168,7 @@ public class UserDbStorage implements UserStorage {
         if (name != null) {
             user.setName(resultSet.getString("name"));
         }
+
         user.setFriends(findUserFriends(id));
         user.setLikedFilms(findLikedFilms(id));
         user.setId(id);

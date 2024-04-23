@@ -95,8 +95,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
 
-        log.debug("Создание фильма - " + film);
-
+        log.debug("Создание фильма - {}", film);
 
         return getFilmById(id);
 
@@ -118,8 +117,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getId());
 
-        log.debug("Обновление фильма - " + film);
-
+        log.debug("Обновление фильма - {}", film);
 
         return getFilmById(film.getId());
     }
@@ -129,10 +127,10 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQueryFilmGenre = "DELETE FROM film_genre WHERE film_id = ?";
         String sqlQueryLikedFilms = "DELETE FROM likes WHERE film_id = ?";
         String sqlQueryUsers = "DELETE FROM films WHERE id = ?;";
-        log.debug("Удаление фильма - " + film);
         jdbcTemplate.update(sqlQueryFilmGenre, film.getId());
         jdbcTemplate.update(sqlQueryLikedFilms, film.getId());
         jdbcTemplate.update(sqlQueryUsers, film.getId());
+        log.debug("Удаление фильма - {}", film);
         return getFilmById(film.getId());
     }
 
