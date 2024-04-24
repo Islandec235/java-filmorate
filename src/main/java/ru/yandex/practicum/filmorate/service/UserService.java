@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -7,41 +8,29 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserService {
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public User addFriend(int userId, int otherUserId) {
-        User user = userStorage.getUserById(userId);
-        User otherUser = userStorage.getUserById(otherUserId);
-        Set<Long> userFriends = user.getFriends();
-        Set<Long> otherUserFriends = otherUser.getFriends();
-        userFriends.add((long) otherUserId);
-        otherUserFriends.add((long) userId);
-        return user;
+    public User addFriend(long userId, long otherUserId) {
+        return userStorage.addFriend(userId, otherUserId);
     }
 
-    public User deleteFriend(int userId, int otherUserId) {
-        User user = userStorage.getUserById(userId);
-        User otherUser = userStorage.getUserById(otherUserId);
-        Set<Long> userFriends = user.getFriends();
-        Set<Long> otherUserFriends = otherUser.getFriends();
-        userFriends.remove((long) otherUserId);
-        otherUserFriends.remove((long) userId);
-        return user;
+    public User deleteFriend(long userId, long otherUserId) {
+        return userStorage.deleteFriend(userId, otherUserId);
     }
 
-    public Collection<User> getFriends(int id) {
+    public Collection<User> getFriends(long id) {
         List<User> friends = new ArrayList<>();
 
         for (long friend : userStorage.getUserById(id).getFriends()) {
-            friends.add(userStorage.getUserById((int) friend));
+            friends.add(userStorage.getUserById(friend));
         }
 
         return friends;
